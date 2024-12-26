@@ -1,0 +1,17 @@
+# Virtual environment
+.venv
+__pycache__/
+.env
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# dbt compiled and target directories
+dbt_modules/
+target/
+
+# Airflow
+logs/
+plugins/
+
+.astro
