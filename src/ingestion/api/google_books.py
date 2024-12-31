@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 API_KEY = os.getenv("GOOGLE_BOOKS_API_KEY")
 
+
 def search_google_books(query):
     """Fetch all books for a given query using the Google Books API."""
     url = "https://www.googleapis.com/books/v1/volumes"
@@ -31,16 +32,20 @@ def search_google_books(query):
             volume_info = item.get("volumeInfo", {})
             sale_info = item.get("saleInfo", {})
 
-            books.append({
-                "title": volume_info.get("title", "N/A"),
-                "authors": ", ".join(volume_info.get("authors", [])),
-                "averageRating": volume_info.get("averageRating", "N/A"),
-                "ratingsCount": volume_info.get("ratingsCount", "N/A"),
-                "publishedDate": volume_info.get("publishedDate", "N/A"),
-                "description": volume_info.get("description", "N/A"),
-                "price": sale_info.get("listPrice", {}).get("amount", "N/A"),
-                "currency": sale_info.get("listPrice", {}).get("currencyCode", "N/A"),
-            })
+            books.append(
+                {
+                    "title": volume_info.get("title", "N/A"),
+                    "authors": ", ".join(volume_info.get("authors", [])),
+                    "averageRating": volume_info.get("averageRating", "N/A"),
+                    "ratingsCount": volume_info.get("ratingsCount", "N/A"),
+                    "publishedDate": volume_info.get("publishedDate", "N/A"),
+                    "description": volume_info.get("description", "N/A"),
+                    "price": sale_info.get("listPrice", {}).get("amount", "N/A"),
+                    "currency": sale_info.get("listPrice", {}).get(
+                        "currencyCode", "N/A"
+                    ),
+                }
+            )
 
         # Check if there are more results
         if "items" not in data or len(data.get("items", [])) < 40:
@@ -51,11 +56,13 @@ def search_google_books(query):
 
     return books
 
-def save_books_to_csv(books, filename="books.csv"):
+
+def save_books_to_json(books, filename="books.json"):
     """Save book data to a CSV file."""
     df = pd.DataFrame(books)
-    df.to_csv(filename, index=False)
+    df.to_json(filename, index=False)
     print(f"Data saved to {filename}")
+
 
 # Main execution
 if __name__ == "__main__":
@@ -66,5 +73,5 @@ if __name__ == "__main__":
     books = search_google_books(query)
 
     # Save results to a CSV file
-    save_books_to_csv(books, filename="google_books_bestsellers.csv")
+    save_books_to_json(books, filename="google_books_bestsellers.json")
     print("Done!")
